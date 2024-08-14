@@ -52,6 +52,8 @@ export class Utils {
     private static readonly OIDC_AUDIENCE_ARG: string = 'oidc-audience';
     // OpenID Connect provider_name input
     private static readonly OIDC_INTEGRATION_PROVIDER_NAME: string = 'oidc-provider-name';
+    // OpenID Connect Token
+    private static readonly OIDC_INPUT_TOKEN: string = 'oidc-token';
     // Job Summaries feature flag
     public static readonly JOB_SUMMARY_DISABLE: string = 'disable-job-summary';
 
@@ -74,13 +76,20 @@ export class Utils {
         }
         core.info('Obtaining an access token through OpenID Connect...');
         const audience: string = core.getInput(Utils.OIDC_AUDIENCE_ARG);
+        const oidcInputToken: string = core.getInput(Utils.OIDC_INPUT_TOKEN);
+
         let jsonWebToken: string | undefined;
-        try {
-            core.debug('Fetching JSON web token');
-            jsonWebToken = await core.getIDToken(audience);
-        } catch (error: any) {
-            throw new Error(`Getting openID Connect JSON web token failed: ${error.message}`);
+        if (!oidcInputToken) {
+            try {
+                core.debug('Fetching JSON web token');
+                jsonWebToken = await core.getIDToken(audience);
+            } catch (error: any) {
+                throw new Error(`Getting openID Connect JSON web token failed: ${error.message}`);
+            }
+        } else {
+            jsonWebToken = oidcInputToken;
         }
+
 
         try {
             return await this.getJfrogAccessTokenThroughOidcProtocol(jfrogCredentials, jsonWebToken, oidcProviderName);
