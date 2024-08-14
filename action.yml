@@ -15,6 +15,9 @@ inputs:
     oidc-audience:
         description: "By default, this is the URL of the GitHub repository owner, such as the organization that owns the repository."
         required: false
+    oidc-token:
+        description: "Option to pass token issued by a generic OIDC provider such as SPIFFE/SPIRE. Defaults to GitHub Actions OIDC when not present"
+        required: false
     disable-job-summary:
         description: "Set to true to disable the generation of Job Summaries."
         default: "false"
